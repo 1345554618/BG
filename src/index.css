@@ -1,0 +1,131 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+@theme {
+  --font-sans: "Inter", "Noto Sans TC", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-brand-charcoal: #1A1A1A;
+  --color-brand-warm-wood: #8B5E3C;
+  --color-brand-soft-gray: #F5F5F5;
+  --color-brand-accent-gold: #C5A059;
+  
+  --color-timber-dark: #2d241e;
+  --color-timber-medium: #5d4e42;
+  --color-timber-light: #f4f1ee;
+  --color-timber-accent: #a67c52;
+}
+
+@layer base {
+  body {
+    @apply font-sans text-brand-charcoal antialiased;
+  }
+}
+
+@layer utilities {
+  .hero-overlay {
+    background: linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.3) 100%);
+  }
+
+  .uestone-tone,
+  .uestone-tone .bg-\[\#f7f4ef\],
+  .uestone-tone .bg-\[\#f5f2ec\],
+  .uestone-tone .bg-\[\#f4f5f7\] {
+    background-color: #f6f1ea !important;
+  }
+
+  .uestone-tone .bg-\[\#f7f4ef\]\/95,
+  .uestone-tone .bg-\[\#f5f2ec\]\/95,
+  .uestone-tone .bg-\[\#f4f5f7\]\/95 {
+    background-color: rgb(246 241 234 / 0.95) !important;
+  }
+
+  .uestone-tone .bg-\[\#3a3128\],
+  .uestone-tone .bg-\[\#2d241e\],
+  .uestone-tone .bg-\[\#20242c\] {
+    background-color: #2e2a26 !important;
+  }
+
+  .uestone-tone .bg-\[\#f3ede4\],
+  .uestone-tone .bg-\[\#f0e8dc\],
+  .uestone-tone .bg-\[\#eef1f5\] {
+    background-color: #f1e8dc !important;
+  }
+
+  .uestone-tone .bg-\[\#fcfaf6\],
+  .uestone-tone .bg-\[\#fafbfd\] {
+    background-color: #fbf8f4 !important;
+  }
+
+  .uestone-tone .text-\[\#3a3128\],
+  .uestone-tone .text-\[\#2f2923\],
+  .uestone-tone .text-\[\#2d241e\],
+  .uestone-tone .text-\[\#20242c\] {
+    color: #2e2a26 !important;
+  }
+
+  .uestone-tone .text-\[\#9a8269\],
+  .uestone-tone .text-\[\#8b745c\],
+  .uestone-tone .text-\[\#7e8a9a\] {
+    color: #8b7a67 !important;
+  }
+
+  .uestone-tone .text-\[\#6b5b4a\],
+  .uestone-tone .text-\[\#6d5c4d\],
+  .uestone-tone .text-\[\#586171\],
+  .uestone-tone .text-\[\#7c6a58\],
+  .uestone-tone .text-\[\#6c7483\] {
+    color: #6b5a49 !important;
+  }
+
+  .uestone-tone .border-\[\#ddd4c7\],
+  .uestone-tone .border-\[\#d8cab9\],
+  .uestone-tone .border-\[\#d8dde5\] {
+    border-color: #ddd1c2 !important;
+  }
+
+  .uestone-tone .border-\[\#e4dacc\],
+  .uestone-tone .border-\[\#eee2d5\],
+  .uestone-tone .border-\[\#e5dccf\],
+  .uestone-tone .border-\[\#e1e5eb\] {
+    border-color: #e6dccf !important;
+  }
+
+  .uestone-tone .border-\[\#e1d2bd\] {
+    border-color: #e1d3c0 !important;
+  }
+
+  .uestone-tone .border-\[\#cdbca7\],
+  .uestone-tone .border-\[\#cfd5de\] {
+    border-color: #d1c3b2 !important;
+  }
+
+  .uestone-tone .ring-\[\#3a3128\],
+  .uestone-tone .ring-\[\#2d241e\],
+  .uestone-tone .ring-\[\#20242c\] {
+    --tw-ring-color: #2e2a26 !important;
+  }
+
+  .uestone-tone .hover\:bg-\[\#9a8269\]:hover,
+  .uestone-tone .hover\:bg-\[\#8b745c\]:hover,
+  .uestone-tone .hover\:bg-\[\#4c5666\]:hover {
+    background-color: #7e6e5d !important;
+  }
+
+  .uestone-tone .hover\:bg-\[\#f3ede4\]:hover,
+  .uestone-tone .hover\:bg-\[\#f0e8dc\]:hover,
+  .uestone-tone .hover\:bg-\[\#eef1f5\]:hover {
+    background-color: #f1e8dc !important;
+  }
+
+  .uestone-tone .hover\:text-\[\#2f2923\]:hover,
+  .uestone-tone .hover\:text-\[\#2d241e\]:hover,
+  .uestone-tone .hover\:text-\[\#20242c\]:hover {
+    color: #2e2a26 !important;
+  }
+
+  .uestone-tone .hover\:text-\[\#9a8269\]:hover,
+  .uestone-tone .hover\:text-\[\#8b745c\]:hover,
+  .uestone-tone .hover\:text-\[\#586171\]:hover {
+    color: #7e6e5d !important;
+  }
+}
