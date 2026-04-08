@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowRight, Download, FileText, Layers3, Package, Ruler } from 'lucide-react';
+﻿import React, { useEffect, useState } from 'react';
+import { ArrowRight, Clock3, Download, FileText, Layers3, Package, Ruler } from 'lucide-react';
+import ProductImageGallery from './ProductImageGallery';
+import ImageActionCard from './ImageActionCard';
 import { catalogs } from '../data/catalogs';
 import { woodFloorProducts } from '../data/woodFloorProducts';
 
 export default function WoodFloorGallery({ onNavigate }: { onNavigate: (view: string) => void }) {
-  const woodFloorCatalog = catalogs.find((catalog) => catalog.id === 'wood-floor')!;
+  const woodFloorCatalog = catalogs.find((catalog) => catalog.id === 'wood-floor');
   const [selectedProductCode, setSelectedProductCode] = useState(woodFloorProducts[0].code);
   const selectedProduct =
     woodFloorProducts.find((product) => product.code === selectedProductCode) ?? woodFloorProducts[0];
@@ -14,72 +16,76 @@ export default function WoodFloorGallery({ onNavigate }: { onNavigate: (view: st
     setActiveImage(selectedProduct.images[0]);
   }, [selectedProduct]);
 
+  const stockTone =
+    'border-[#c9a372] bg-[linear-gradient(135deg,#b88c58,#d4ae79)] text-white shadow-[0_16px_32px_rgba(184,140,88,0.24)]';
+
   return (
-    <div className="uestone-tone min-h-screen bg-[#f5f2ec] text-[#2d241e]">
+    <div className="min-h-screen bg-[#f5f2ec] text-[#2d241e]">
       <header className="sticky top-0 z-50 border-b border-[#ddd4c7] bg-[#f5f2ec]/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <button type="button" className="flex items-center gap-3" onClick={() => onNavigate('lux')}>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2d241e] font-bold text-white">W</div>
-            <div className="text-left">
-              <p className="text-lg font-bold tracking-[0.16em] text-[#2d241e]">WOOD FLOOR</p>
-              <p className="hidden text-[11px] uppercase tracking-[0.32em] text-[#8b745c] sm:block">SPC Collection</p>
-            </div>
+          <button type="button" className="flex items-center" onClick={() => onNavigate('lux')}>
+            <img src="/logo/BG_logo.png" alt="Beauty Green" className="h-12 w-auto object-contain sm:h-14" />
           </button>
 
           <nav className="hidden items-center gap-8 text-sm font-medium text-[#6d5c4d] md:flex">
             <a href="#featured" className="transition-colors hover:text-[#2d241e]">
-              精選展示
+              產品展示
             </a>
             <a href="#products" className="transition-colors hover:text-[#2d241e]">
-              產品列表
+              全部木地板
             </a>
-            <a href={woodFloorCatalog.url} target="_blank" rel="noreferrer" className="transition-colors hover:text-[#2d241e]">
-              型錄下載
-            </a>
+            {woodFloorCatalog ? (
+              <a href={woodFloorCatalog.url} target="_blank" rel="noreferrer" className="transition-colors hover:text-[#2d241e]">
+                線上型錄
+              </a>
+            ) : null}
           </nav>
 
-          <a
-            href={woodFloorCatalog.url}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-[#2d241e] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white transition-colors hover:bg-[#8b745c]"
-          >
-            <Download className="h-4 w-4" />
-            開啟型錄
-          </a>
+          {woodFloorCatalog ? (
+            <a
+              href={woodFloorCatalog.url}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-[#2d241e] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white transition-colors hover:bg-[#8b745c]"
+            >
+              <Download className="h-4 w-4" />
+              開啟型錄
+            </a>
+          ) : null}
         </div>
       </header>
 
       <main>
         <section id="featured" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
           <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1.08fr_0.92fr]">
-            <div className="space-y-4">
-              <div className="overflow-hidden rounded-[32px] border border-[#ddd4c7] bg-white shadow-[0_24px_60px_rgba(45,36,30,0.08)]">
-                <img src={activeImage} alt={selectedProduct.code} className="aspect-square w-full object-cover" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                {selectedProduct.images.map((image, index) => (
-                  <button
-                    key={image}
-                    type="button"
-                    onClick={() => setActiveImage(image)}
-                    className={`overflow-hidden rounded-2xl border transition ${
-                      activeImage === image
-                        ? 'border-[#2d241e] shadow-[0_10px_24px_rgba(45,36,30,0.12)]'
-                        : 'border-[#ddd4c7] hover:border-[#8b745c]'
-                    }`}
-                    aria-label={`查看 ${selectedProduct.code} 第 ${index + 1} 張圖片`}
-                  >
-                    <img src={image} alt={`${selectedProduct.code} ${index + 1}`} className="aspect-square w-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            </div>
+            <ProductImageGallery
+              images={selectedProduct.images}
+              activeImage={activeImage}
+              onSelect={setActiveImage}
+              altBase={selectedProduct.code}
+              aspectClass="aspect-square"
+              thumbAspectClass="aspect-[16/10]"
+            />
 
             <div className="rounded-[32px] border border-[#ddd4c7] bg-white p-8 shadow-[0_24px_60px_rgba(45,36,30,0.08)] lg:p-10">
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.36em] text-[#8b745c]">SPC Wood Floor</p>
-              <h1 className="mb-3 text-4xl font-bold tracking-tight text-[#2d241e] lg:text-5xl">{selectedProduct.code}</h1>
-              <p className="mb-6 text-xl text-[#6d5c4d]">SPC 木地板</p>
+              <p className="mb-4 text-xs font-bold uppercase tracking-[0.36em] text-[#8b745c]">SPC WOOD FLOOR</p>
+
+              <div className="mb-4 flex flex-wrap items-center gap-3">
+                <h1 className="text-4xl font-bold tracking-tight text-[#2d241e] lg:text-5xl">{selectedProduct.code}</h1>
+                <div className={`inline-flex items-center gap-3 rounded-2xl border px-4 py-2.5 ${stockTone}`}>
+                  <span className="h-3 w-3 rounded-full bg-[#fff2dc] ring-4 ring-white/15" />
+                  <div className="leading-tight">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/75">供應狀態</p>
+                    <p className="text-sm font-bold tracking-[0.08em]">{selectedProduct.stockStatus}</p>
+                  </div>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/12">
+                    <Clock3 className="h-4 w-4 text-white" />
+                  </div>
+                </div>
+              </div>
+
+              <p className="mb-2 text-xl text-[#6d5c4d]">SPC 木地板系列</p>
+              <p className="mb-6 text-sm font-medium text-[#8b745c]">接單後安排備貨</p>
 
               <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-[#e5dccf] bg-[#fbf8f4] p-4">
@@ -87,7 +93,7 @@ export default function WoodFloorGallery({ onNavigate }: { onNavigate: (view: st
                     <Layers3 className="h-4 w-4" />
                     <span className="text-xs font-semibold uppercase tracking-[0.24em]">系列</span>
                   </div>
-                  <p className="font-bold text-[#2d241e]">SPC 木地板</p>
+                  <p className="font-bold text-[#2d241e]">{selectedProduct.series}</p>
                 </div>
                 <div className="rounded-2xl border border-[#e5dccf] bg-[#fbf8f4] p-4">
                   <div className="mb-2 flex items-center gap-2 text-[#8b745c]">
@@ -112,29 +118,33 @@ export default function WoodFloorGallery({ onNavigate }: { onNavigate: (view: st
                 </div>
               </div>
 
-              <div className="mb-8 rounded-3xl border border-[#e1d2bd] bg-[#f0e8dc] p-6">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-[#8b745c]">Company Price</p>
+              <div className="mb-8 rounded-3xl border border-[#e1d2bd] bg-[#f0e8dc] p-5">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-[#8b745c]">Price</p>
                 <p className="mb-1 text-3xl font-bold text-[#2d241e]">{selectedProduct.marketPricePerBox}</p>
                 <p className="text-lg font-semibold text-[#6d5c4d]">{selectedProduct.designerPricePerBox}</p>
-                <p className="mt-3 text-sm leading-relaxed text-[#6d5c4d]">適合提案、選樣與比較不同木地板規格時快速參考。</p>
+                <p className="mt-3 text-sm leading-relaxed text-[#6d5c4d]">
+                  適合居家、商業空間與展示空間使用，兼顧美感與日常維護便利性。
+                </p>
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row">
-                <a
-                  href={woodFloorCatalog.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2d241e] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#8b745c]"
-                >
-                  <FileText className="h-4 w-4" />
-                  查看型錄
-                </a>
+                {woodFloorCatalog ? (
+                  <a
+                    href={woodFloorCatalog.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2d241e] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#8b745c]"
+                  >
+                    <FileText className="h-4 w-4" />
+                    查看型錄
+                  </a>
+                ) : null}
                 <button
                   type="button"
                   onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d1c3b2] px-6 py-3 text-sm font-semibold text-[#2d241e] transition-colors hover:bg-[#f0e8dc]"
                 >
-                  查看產品
+                  查看全部產品
                 </button>
               </div>
             </div>
@@ -142,71 +152,31 @@ export default function WoodFloorGallery({ onNavigate }: { onNavigate: (view: st
         </section>
 
         <section id="products" className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
-          <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="mb-10 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="mb-3 text-xs font-bold uppercase tracking-[0.36em] text-[#8b745c]">Product Grid</p>
-              <h2 className="mb-3 text-3xl font-bold text-[#2d241e] lg:text-4xl">SPC 木地板產品一覽</h2>
+              <h2 className="mb-3 text-3xl font-bold text-[#2d241e] lg:text-4xl">SPC 木地板產品</h2>
               <p className="max-w-3xl leading-relaxed text-[#6d5c4d]">
-                查看各型號的規格、厚度、裝箱數與價格資訊，方便快速比對不同花色與條件。
+                點選下方型號即可切換上方主圖與規格資訊，方便快速比對每一款木地板的尺寸與價格。
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {woodFloorProducts.map((product) => (
-              <article
+              <ImageActionCard
                 key={product.code}
-                className={`group overflow-hidden rounded-[28px] border bg-white shadow-[0_20px_40px_rgba(45,36,30,0.06)] transition-all ${
-                  selectedProduct.code === product.code
-                    ? 'border-[#2d241e] ring-1 ring-[#2d241e]'
-                    : 'border-[#ddd4c7] hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(45,36,30,0.12)]'
-                }`}
-              >
-                <button
-                  type="button"
-                  className="block w-full text-left"
-                  onClick={() => {
-                    setSelectedProductCode(product.code);
-                    document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }}
-                >
-                  <div className="aspect-square overflow-hidden bg-[#f0e8dc]">
-                    <img
-                      src={product.images[0]}
-                      alt={product.code}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-
-                  <div className="p-6">
-                    <div className="mb-4 flex items-start justify-between gap-4">
-                      <div>
-                        <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.28em] text-[#8b745c]">SPC Wood Floor</p>
-                        <h3 className="text-2xl font-bold text-[#2d241e]">{product.code}</h3>
-                      </div>
-                    </div>
-
-                    <div className="mb-5 grid grid-cols-1 gap-3 text-sm text-[#6d5c4d]">
-                      <div className="rounded-2xl border border-[#e5dccf] bg-[#fbf8f4] p-3">
-                        <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#8b745c]">尺寸 / 厚度</p>
-                        <p className="font-semibold text-[#2d241e]">
-                          {product.size} / {product.thickness}
-                        </p>
-                      </div>
-                      <div className="rounded-2xl border border-[#e5dccf] bg-[#fbf8f4] p-3">
-                        <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#8b745c]">市場價 / 設計師價</p>
-                        <p className="font-semibold text-[#2d241e]">{product.marketPricePerBox}</p>
-                        <p>{product.designerPricePerBox}</p>
-                      </div>
-                    </div>
-
-                    <div className="inline-flex items-center gap-2 text-sm font-semibold text-[#2d241e] transition-colors hover:text-[#8b745c]">
-                      查看詳情
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                  </div>
-                </button>
-              </article>
+                imageSrc={product.images[0]}
+                alt={product.code}
+                selected={selectedProduct.code === product.code}
+                aspectClass="aspect-[5/4]"
+                imageBackgroundClass="bg-[#f0e8dc]"
+                imageBorderClass="border-[#e8ddd0]"
+                onClick={() => {
+                  setSelectedProductCode(product.code);
+                  document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+              />
             ))}
           </div>
         </section>

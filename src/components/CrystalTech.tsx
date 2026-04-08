@@ -1,383 +1,263 @@
-import React, { CSSProperties, useMemo, useState } from 'react';
-import { ArrowRight, Download, FileText, Package, Palette, Ruler } from 'lucide-react';
+﻿import React, { useEffect, useMemo, useState } from 'react';
+import { ArrowRight, Clock3, Download, FileText, Layers3, Package, PackageCheck, Ruler } from 'lucide-react';
+import ProductImageGallery from './ProductImageGallery';
+import ImageActionCard from './ImageActionCard';
+import { carbonCrystalAccessories, carbonCrystalProducts } from '../data/carbonCrystalProducts';
 import { crystalCatalog } from '../data/catalogs';
-import {
-  carbonCrystalAccessories,
-  carbonCrystalProducts,
-  type CarbonCrystalProduct,
-} from '../data/carbonCrystalProducts';
 
-const seriesOptions = [
-  { id: 'all', label: '全部系列' },
-  { id: 'wood', label: '木紋' },
-  { id: 'fabric', label: '布紋' },
-  { id: 'metal', label: '金屬' },
-  { id: 'marble', label: '大理石' },
-] as const;
-
-const seriesLabelMap: Record<CarbonCrystalProduct['series'], string> = {
+const seriesLabels: Record<string, string> = {
+  all: '全部',
   wood: '木紋',
   fabric: '布紋',
   metal: '金屬',
   marble: '大理石',
+  cave: '洞石',
+  relief: '浮雕',
+  skin: '膚感',
 };
 
-const accessoryLabelMap = ['L 型收邊條', '工字條'] as const;
-
-function getPreviewStyle(product: CarbonCrystalProduct): CSSProperties {
-  switch (product.series) {
-    case 'wood':
-      return {
-        backgroundImage:
-          'linear-gradient(135deg, rgba(82,51,24,0.18), rgba(193,144,92,0.15)), repeating-linear-gradient(90deg, #6a4326 0, #6a4326 18px, #8a5a33 18px, #8a5a33 40px, #4d3019 40px, #4d3019 54px)',
-      };
-    case 'fabric':
-      return {
-        backgroundImage:
-          'linear-gradient(135deg, rgba(90,90,90,0.12), rgba(215,206,191,0.3)), repeating-linear-gradient(0deg, #c8c2b8 0, #c8c2b8 8px, #d8d0c5 8px, #d8d0c5 16px), repeating-linear-gradient(90deg, rgba(126,117,102,0.25) 0, rgba(126,117,102,0.25) 2px, transparent 2px, transparent 18px)',
-      };
-    case 'metal':
-      return {
-        backgroundImage:
-          product.code === '7109'
-            ? 'linear-gradient(135deg, #4f5561 0%, #8e96a4 25%, #d8dde5 50%, #747d89 75%, #404751 100%)'
-            : 'linear-gradient(135deg, #7b6647 0%, #c1ab88 22%, #f0e7d5 50%, #b19672 72%, #6c5a40 100%)',
-      };
-    case 'marble':
-      return {
-        backgroundImage:
-          'linear-gradient(135deg, #f4f4f1, #ddd8cf), linear-gradient(115deg, transparent 0, transparent 36%, rgba(120,120,120,0.18) 36%, rgba(120,120,120,0.18) 38%, transparent 38%, transparent 52%, rgba(180,170,160,0.24) 52%, rgba(180,170,160,0.24) 54%, transparent 54%)',
-      };
-    default:
-      return {
-        backgroundImage: 'linear-gradient(135deg, #ece7df, #d8cdc0)',
-      };
-  }
-}
-
-function displayPrice(price: string | null) {
-  return price ?? '洽詢';
-}
-
-function ProductVisual({ product, mode }: { product: CarbonCrystalProduct; mode: 'hero' | 'card' }) {
-  if (product.image) {
-    return (
-      <img
-        src={product.image}
-        alt={product.code}
-        className={`h-full w-full object-cover ${mode === 'card' ? 'transition-transform duration-500 group-hover:scale-105' : ''}`}
-      />
-    );
-  }
-
-  return (
-    <div className="h-full w-full" style={getPreviewStyle(product)}>
-      <div className="h-full w-full bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.45),transparent_38%)]" />
-    </div>
-  );
-}
-
 export default function CrystalTech({ onNavigate }: { onNavigate: (view: string) => void }) {
-  const [selectedSeries, setSelectedSeries] = useState<(typeof seriesOptions)[number]['id']>('all');
-  const [selectedProductCode, setSelectedProductCode] = useState(carbonCrystalProducts[0].code);
+  const filters = useMemo(() => ['all', 'wood', 'fabric', 'metal', 'marble', 'cave', 'relief', 'skin'], []);
+  const [activeFilter, setActiveFilter] = useState('all');
+  const filteredProducts =
+    activeFilter === 'all'
+      ? carbonCrystalProducts
+      : carbonCrystalProducts.filter((product) => product.series === activeFilter);
 
-  const filteredProducts = useMemo(
-    () =>
-      selectedSeries === 'all'
-        ? carbonCrystalProducts
-        : carbonCrystalProducts.filter((product) => product.series === selectedSeries),
-    [selectedSeries],
-  );
-
+  const [selectedProductCode, setSelectedProductCode] = useState(carbonCrystalProducts[0]?.code ?? '');
   const selectedProduct =
-    carbonCrystalProducts.find((product) => product.code === selectedProductCode) ?? carbonCrystalProducts[0];
+    filteredProducts.find((product) => product.code === selectedProductCode) ?? filteredProducts[0] ?? carbonCrystalProducts[0];
+  const currentImages = selectedProduct?.image ? [selectedProduct.image] : [];
+  const [activeImage, setActiveImage] = useState(currentImages[0] ?? '');
+
+  useEffect(() => {
+    if (!filteredProducts.length) {
+      return;
+    }
+
+    if (!filteredProducts.some((product) => product.code === selectedProductCode)) {
+      setSelectedProductCode(filteredProducts[0].code);
+    }
+  }, [filteredProducts, selectedProductCode]);
+
+  useEffect(() => {
+    setActiveImage(currentImages[0] ?? '');
+  }, [selectedProduct?.code, currentImages]);
+
+  if (!selectedProduct) {
+    return null;
+  }
+
+  const isInStock = selectedProduct.stockStatus === '現貨';
+  const StockIcon = isInStock ? PackageCheck : Clock3;
+  const stockTone = isInStock
+    ? 'border-[#88a790] bg-[linear-gradient(135deg,#5d7d66,#7ea085)] text-white shadow-[0_16px_32px_rgba(93,125,102,0.24)]'
+    : 'border-[#c9a372] bg-[linear-gradient(135deg,#b88c58,#d4ae79)] text-white shadow-[0_16px_32px_rgba(184,140,88,0.24)]';
+  const stockDotTone = isInStock ? 'bg-[#dff7e5]' : 'bg-[#fff2dc]';
+  const stockHint = isInStock ? '可快速安排出貨' : '接單後安排備貨';
 
   return (
-    <div className="uestone-tone min-h-screen bg-[#f4f5f7] text-[#20242c]">
-      <header className="sticky top-0 z-50 border-b border-[#d8dde5] bg-[#f4f5f7]/95 backdrop-blur">
+    <div className="min-h-screen bg-[#f5f2ec] text-[#2d241e]">
+      <header className="sticky top-0 z-50 border-b border-[#ddd4c7] bg-[#f5f2ec]/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <button type="button" className="flex items-center gap-3" onClick={() => onNavigate('lux')}>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#20242c] font-bold text-white">C</div>
-            <div className="text-left">
-              <p className="text-lg font-bold tracking-[0.16em] text-[#20242c]">CRYSTAL BOARD</p>
-              <p className="hidden text-[11px] uppercase tracking-[0.32em] text-[#7e8a9a] sm:block">Material Collection</p>
-            </div>
+          <button type="button" className="flex items-center" onClick={() => onNavigate('lux')}>
+            <img src="/logo/BG_logo.png" alt="Beauty Green" className="h-12 w-auto object-contain sm:h-14" />
           </button>
 
-          <nav className="hidden items-center gap-8 text-sm font-medium text-[#586171] md:flex">
-            <a href="#featured" className="transition-colors hover:text-[#20242c]">
-              精選展示
+          <nav className="hidden items-center gap-8 text-sm font-medium text-[#6d5c4d] md:flex">
+            <a href="#featured" className="transition-colors hover:text-[#2d241e]">
+              產品展示
             </a>
-            <a href="#products" className="transition-colors hover:text-[#20242c]">
-              產品列表
+            <a href="#products" className="transition-colors hover:text-[#2d241e]">
+              碳晶板系列
             </a>
-            <a href="#accessories" className="transition-colors hover:text-[#20242c]">
-              配件
-            </a>
-            <a href={crystalCatalog.url} target="_blank" rel="noreferrer" className="transition-colors hover:text-[#20242c]">
-              型錄下載
-            </a>
+            {crystalCatalog ? (
+              <a href={crystalCatalog.url} target="_blank" rel="noreferrer" className="transition-colors hover:text-[#2d241e]">
+                線上型錄
+              </a>
+            ) : null}
           </nav>
 
-          <a
-            href={crystalCatalog.url}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-[#20242c] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white transition-colors hover:bg-[#4c5666]"
-          >
-            <Download className="h-4 w-4" />
-            開啟型錄
-          </a>
+          {crystalCatalog ? (
+            <a
+              href={crystalCatalog.url}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-[#2d241e] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white transition-colors hover:bg-[#8b745c]"
+            >
+              <Download className="h-4 w-4" />
+              開啟型錄
+            </a>
+          ) : null}
         </div>
       </header>
 
       <main>
         <section id="featured" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-          <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="relative min-h-[420px] overflow-hidden rounded-[32px] border border-[#d8dde5] bg-white shadow-[0_24px_60px_rgba(32,36,44,0.08)]">
-              <ProductVisual product={selectedProduct} mode="hero" />
-              <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(12,16,24,0.55),transparent_45%)]" />
-              <div className="absolute inset-x-0 bottom-0 p-8 lg:p-10">
-                <div className="max-w-lg">
-                  <p className="mb-3 text-xs font-bold uppercase tracking-[0.36em] text-white/75">
-                    {seriesLabelMap[selectedProduct.series]}
-                  </p>
-                  <h1 className="text-5xl font-bold tracking-tight text-white drop-shadow-[0_10px_25px_rgba(0,0,0,0.18)] lg:text-6xl">
-                    {selectedProduct.code}
-                  </h1>
-                </div>
-                <div className="mt-6 grid max-w-lg grid-cols-2 gap-3">
-                  <div className="rounded-2xl bg-white/88 p-4 backdrop-blur">
-                    <p className="mb-1 text-[11px] uppercase tracking-[0.26em] text-[#7e8a9a]">尺寸</p>
-                    <p className="font-bold text-[#20242c]">{selectedProduct.size}</p>
+          <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1.08fr_0.92fr]">
+            <ProductImageGallery
+              images={currentImages}
+              activeImage={activeImage}
+              onSelect={setActiveImage}
+              altBase={selectedProduct.code}
+              aspectClass="aspect-[16/10]"
+              thumbAspectClass="aspect-[16/10]"
+              placeholderText="尚未提供產品照片"
+            />
+
+            <div className="rounded-[32px] border border-[#ddd4c7] bg-white p-8 shadow-[0_24px_60px_rgba(45,36,30,0.08)] lg:p-10">
+              <p className="mb-4 text-xs font-bold uppercase tracking-[0.36em] text-[#8b745c]">CARBON CRYSTAL PANEL</p>
+
+              <div className="mb-4 flex flex-wrap items-center gap-3">
+                <h1 className="text-4xl font-bold tracking-tight text-[#2d241e] lg:text-5xl">{selectedProduct.code}</h1>
+                <div className={`inline-flex items-center gap-3 rounded-2xl border px-4 py-2.5 ${stockTone}`}>
+                  <span className={`h-3 w-3 rounded-full ${stockDotTone} ring-4 ring-white/15`} />
+                  <div className="leading-tight">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/75">供應狀態</p>
+                    <p className="text-sm font-bold tracking-[0.08em]">{selectedProduct.stockStatus}</p>
                   </div>
-                  <div className="rounded-2xl bg-white/88 p-4 backdrop-blur">
-                    <p className="mb-1 text-[11px] uppercase tracking-[0.26em] text-[#7e8a9a]">包裝</p>
-                    <p className="font-bold text-[#20242c]">{selectedProduct.packing}</p>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/12">
+                    <StockIcon className="h-4 w-4 text-white" />
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="rounded-[32px] border border-[#d8dde5] bg-white p-8 shadow-[0_24px_60px_rgba(32,36,44,0.08)] lg:p-10">
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.36em] text-[#7e8a9a]">Price Sheet</p>
-              <h2 className="mb-3 text-4xl font-bold tracking-tight text-[#20242c]">{selectedProduct.code}</h2>
-              <p className="mb-6 text-xl text-[#586171]">{seriesLabelMap[selectedProduct.series]} 碳晶板</p>
-
-              <div className="mb-6 rounded-3xl border border-[#d8dde5] bg-[#eef1f5] p-6">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-[#7e8a9a]">Market Price</p>
-                <p className="mb-1 text-3xl font-bold text-[#20242c]">{displayPrice(selectedProduct.marketPrice)}</p>
-                <p className="text-sm text-[#6c7483]">提供市場價與各通路價格帶，方便快速掌握不同型號的選材預算。</p>
-              </div>
+              <p className="mb-2 text-xl text-[#6d5c4d]">{selectedProduct.seriesLabel}</p>
+              <p className="mb-3 text-sm font-medium text-[#8b745c]">{stockHint}</p>
+              {selectedProduct.note ? <p className="mb-6 text-sm text-[#8b745c]">{selectedProduct.note}</p> : <div className="mb-6" />}
 
               <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-[#e1e5eb] bg-[#fafbfd] p-4">
-                  <div className="mb-2 flex items-center gap-2 text-[#7e8a9a]">
+                <div className="rounded-2xl border border-[#e5dccf] bg-[#fbf8f4] p-4">
+                  <div className="mb-2 flex items-center gap-2 text-[#8b745c]">
+                    <Layers3 className="h-4 w-4" />
+                    <span className="text-xs font-semibold uppercase tracking-[0.24em]">系列</span>
+                  </div>
+                  <p className="font-bold text-[#2d241e]">{selectedProduct.seriesLabel}</p>
+                </div>
+                <div className="rounded-2xl border border-[#e5dccf] bg-[#fbf8f4] p-4">
+                  <div className="mb-2 flex items-center gap-2 text-[#8b745c]">
                     <Ruler className="h-4 w-4" />
                     <span className="text-xs font-semibold uppercase tracking-[0.24em]">尺寸</span>
                   </div>
-                  <p className="font-bold text-[#20242c]">{selectedProduct.size}</p>
+                  <p className="font-bold text-[#2d241e]">{selectedProduct.size}</p>
                 </div>
-                <div className="rounded-2xl border border-[#e1e5eb] bg-[#fafbfd] p-4">
-                  <div className="mb-2 flex items-center gap-2 text-[#7e8a9a]">
-                    <Package className="h-4 w-4" />
-                    <span className="text-xs font-semibold uppercase tracking-[0.24em]">包裝</span>
-                  </div>
-                  <p className="font-bold text-[#20242c]">{selectedProduct.packing}</p>
-                </div>
-                <div className="rounded-2xl border border-[#e1e5eb] bg-[#fafbfd] p-4">
-                  <div className="mb-2 flex items-center gap-2 text-[#7e8a9a]">
+                <div className="rounded-2xl border border-[#e5dccf] bg-[#fbf8f4] p-4">
+                  <div className="mb-2 flex items-center gap-2 text-[#8b745c]">
                     <ArrowRight className="h-4 w-4" />
                     <span className="text-xs font-semibold uppercase tracking-[0.24em]">厚度</span>
                   </div>
-                  <p className="font-bold text-[#20242c]">{selectedProduct.thickness}</p>
+                  <p className="font-bold text-[#2d241e]">{selectedProduct.thickness}</p>
                 </div>
-                <div className="rounded-2xl border border-[#e1e5eb] bg-[#fafbfd] p-4">
-                  <div className="mb-2 flex items-center gap-2 text-[#7e8a9a]">
-                    <Palette className="h-4 w-4" />
-                    <span className="text-xs font-semibold uppercase tracking-[0.24em]">系列</span>
+                <div className="rounded-2xl border border-[#e5dccf] bg-[#fbf8f4] p-4">
+                  <div className="mb-2 flex items-center gap-2 text-[#8b745c]">
+                    <Package className="h-4 w-4" />
+                    <span className="text-xs font-semibold uppercase tracking-[0.24em]">裝箱數</span>
                   </div>
-                  <p className="font-bold text-[#20242c]">{seriesLabelMap[selectedProduct.series]}</p>
+                  <p className="font-bold text-[#2d241e]">{selectedProduct.packing}</p>
                 </div>
               </div>
 
-              <div className="mb-6 grid grid-cols-2 gap-3 text-sm">
-                <div className="rounded-2xl border border-[#e1e5eb] bg-[#fafbfd] p-4">
-                  <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#7e8a9a]">設計師價</p>
-                  <p className="font-bold text-[#20242c]">{displayPrice(selectedProduct.designerPrice)}</p>
-                </div>
-                <div className="rounded-2xl border border-[#e1e5eb] bg-[#fafbfd] p-4">
-                  <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#7e8a9a]">經銷價</p>
-                  <p className="font-bold text-[#20242c]">{displayPrice(selectedProduct.distributorPrice)}</p>
-                </div>
-                <div className="rounded-2xl border border-[#e1e5eb] bg-[#fafbfd] p-4">
-                  <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#7e8a9a]">專業經銷價</p>
-                  <p className="font-bold text-[#20242c]">{displayPrice(selectedProduct.professionalDealerPrice)}</p>
-                </div>
-                <div className="rounded-2xl border border-[#e1e5eb] bg-[#fafbfd] p-4">
-                  <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#7e8a9a]">型錄</p>
-                  <a href={crystalCatalog.url} target="_blank" rel="noreferrer" className="font-bold text-[#20242c] transition-colors hover:text-[#586171]">
-                    查看 PDF
+              <div className="mb-8 rounded-3xl border border-[#e1d2bd] bg-[#f0e8dc] p-5">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-[#8b745c]">Price</p>
+                <p className="mb-1 text-3xl font-bold text-[#2d241e]">{selectedProduct.marketPrice ?? '請洽詢'}</p>
+                <p className="mt-3 text-sm leading-relaxed text-[#6d5c4d]">
+                  適合牆面、櫃體立面與展示空間使用，呈現俐落材質層次與現代空間質感。
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                {crystalCatalog ? (
+                  <a
+                    href={crystalCatalog.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2d241e] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#8b745c]"
+                  >
+                    <FileText className="h-4 w-4" />
+                    查看型錄
                   </a>
-                </div>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d1c3b2] px-6 py-3 text-sm font-semibold text-[#2d241e] transition-colors hover:bg-[#f0e8dc]"
+                >
+                  查看全部產品
+                </button>
               </div>
             </div>
           </div>
         </section>
 
-        <section id="products" className="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
-          <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.36em] text-[#7e8a9a]">Product Grid</p>
-              <h2 className="mb-3 text-3xl font-bold text-[#20242c] lg:text-4xl">碳晶板系列總覽</h2>
-              <p className="max-w-3xl leading-relaxed text-[#586171]">
-                依木紋、布紋、金屬與大理石系列分類瀏覽，快速查看尺寸、厚度與價格資訊。
-              </p>
-            </div>
-
-            <div className="flex flex-wrap gap-3">
-              {seriesOptions.map((series) => (
-                <button
-                  key={series.id}
-                  type="button"
-                  onClick={() => setSelectedSeries(series.id)}
-                  className={`rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
-                    selectedSeries === series.id
-                      ? 'bg-[#20242c] text-white'
-                      : 'border border-[#cfd5de] text-[#586171] hover:bg-white'
-                  }`}
-                >
-                  {series.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {filteredProducts.map((product) => (
-              <article
-                key={product.code}
-                className={`group overflow-hidden rounded-[28px] border bg-white shadow-[0_20px_40px_rgba(32,36,44,0.06)] transition-all ${
-                  selectedProduct.code === product.code
-                    ? 'border-[#20242c] ring-1 ring-[#20242c]'
-                    : 'border-[#d8dde5] hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(32,36,44,0.12)]'
+        <section id="products" className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+          <div className="mb-8 flex flex-wrap gap-3">
+            {filters.map((filter) => (
+              <button
+                key={filter}
+                type="button"
+                onClick={() => setActiveFilter(filter)}
+                className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
+                  activeFilter === filter
+                    ? 'bg-[#2d241e] text-white'
+                    : 'border border-[#d1c3b2] bg-white text-[#6d5c4d] hover:border-[#8b745c] hover:text-[#2d241e]'
                 }`}
               >
-                <button
-                  type="button"
-                  className="block w-full text-left"
-                  onClick={() => {
-                    setSelectedProductCode(product.code);
-                    document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }}
-                >
-                  <div className="aspect-[4/3] overflow-hidden bg-[#eef1f5]">
-                    <ProductVisual product={product} mode="card" />
-                  </div>
+                {seriesLabels[filter]}
+              </button>
+            ))}
+          </div>
 
-                  <div className="p-6">
-                    <div className="mb-4 flex items-start justify-between gap-4">
-                      <div>
-                        <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.28em] text-[#7e8a9a]">
-                          {seriesLabelMap[product.series]}
-                        </p>
-                        <h3 className="text-2xl font-bold text-[#20242c]">{product.code}</h3>
-                      </div>
-                      <span className="rounded-full bg-[#eef1f5] px-3 py-1 text-sm font-bold text-[#20242c]">
-                        {displayPrice(product.marketPrice)}
-                      </span>
-                    </div>
+          <div className="mb-10">
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.36em] text-[#8b745c]">Product Grid</p>
+            <h2 className="mb-3 text-3xl font-bold text-[#2d241e] lg:text-4xl">碳晶板產品系列</h2>
+            <p className="max-w-3xl leading-relaxed text-[#6d5c4d]">
+              木紋、布紋、金屬、大理石、洞石、浮雕與膚感系列都可快速切換，點選型號後會自動回到上方展示區查看主圖、價格與供應狀態。
+            </p>
+          </div>
 
-                    <div className="mb-5 grid grid-cols-2 gap-3 text-sm text-[#586171]">
-                      <div className="rounded-2xl border border-[#e1e5eb] bg-[#fafbfd] p-3">
-                        <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#7e8a9a]">尺寸</p>
-                        <p className="font-semibold text-[#20242c]">{product.size}</p>
-                      </div>
-                      <div className="rounded-2xl border border-[#e1e5eb] bg-[#fafbfd] p-3">
-                        <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#7e8a9a]">包裝</p>
-                        <p className="font-semibold text-[#20242c]">{product.packing}</p>
-                      </div>
-                    </div>
-
-                    <div className="inline-flex items-center gap-2 text-sm font-semibold text-[#20242c] transition-colors hover:text-[#586171]">
-                      查看詳情
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                  </div>
-                </button>
-              </article>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredProducts.map((product) => (
+              <ImageActionCard
+                key={product.code}
+                imageSrc={product.image}
+                alt={product.code}
+                selected={selectedProduct.code === product.code}
+                aspectClass="aspect-[5/4]"
+                imageBackgroundClass="bg-[#f0e8dc]"
+                imageBorderClass="border-[#e8ddd0]"
+                placeholderText="尚未提供照片"
+                onClick={() => {
+                  setSelectedProductCode(product.code);
+                  document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+              />
             ))}
           </div>
         </section>
 
-        <section id="accessories" className="mx-auto max-w-7xl px-4 py-12 pb-20 sm:px-6 lg:px-8">
-          <div className="rounded-[32px] border border-[#d8dde5] bg-white p-8 shadow-[0_20px_40px_rgba(32,36,44,0.06)] lg:p-10">
-            <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <p className="mb-3 text-xs font-bold uppercase tracking-[0.36em] text-[#7e8a9a]">Accessories</p>
-                <h2 className="mb-3 text-3xl font-bold text-[#20242c]">碳晶板配件</h2>
-                <p className="max-w-3xl text-[#586171]">配件價格可與板材一併參考，方便估算整體收邊與施工需求。</p>
-              </div>
-              <a
-                href={crystalCatalog.url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-[#cfd5de] px-5 py-3 text-sm font-semibold text-[#20242c] transition-colors hover:bg-[#eef1f5]"
-              >
-                <FileText className="h-4 w-4" />
-                查看型錄
-              </a>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {carbonCrystalAccessories.map((accessory, index) => (
-                <article key={`${accessory.name}-${index}`} className="rounded-[24px] border border-[#e1e5eb] bg-[#fafbfd] p-6">
-                  <h3 className="mb-2 text-2xl font-bold text-[#20242c]">{accessoryLabelMap[index] ?? accessory.name}</h3>
-                  <p className="mb-5 text-sm text-[#586171]">尺寸：{accessory.size}</p>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div className="rounded-2xl border border-[#e1e5eb] bg-white p-4">
-                      <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#7e8a9a]">市場價</p>
-                      <p className="font-bold text-[#20242c]">{accessory.marketPrice}</p>
-                    </div>
-                    <div className="rounded-2xl border border-[#e1e5eb] bg-white p-4">
-                      <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#7e8a9a]">設計師價</p>
-                      <p className="font-bold text-[#20242c]">{accessory.designerPrice}</p>
-                    </div>
-                    <div className="rounded-2xl border border-[#e1e5eb] bg-white p-4">
-                      <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#7e8a9a]">經銷價</p>
-                      <p className="font-bold text-[#20242c]">{accessory.distributorPrice}</p>
-                    </div>
-                    <div className="rounded-2xl border border-[#e1e5eb] bg-white p-4">
-                      <p className="mb-1 text-[11px] uppercase tracking-[0.24em] text-[#7e8a9a]">專業經銷價</p>
-                      <p className="font-bold text-[#20242c]">{accessory.professionalDealerPrice}</p>
-                    </div>
+        <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+          <div className="rounded-[32px] border border-[#ddd4c7] bg-white p-8 shadow-[0_24px_60px_rgba(45,36,30,0.08)] lg:p-10">
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.36em] text-[#8b745c]">Accessories</p>
+            <h2 className="mb-6 text-3xl font-bold text-[#2d241e]">收邊配件</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {carbonCrystalAccessories.map((item) => (
+                <div key={item.name} className="rounded-3xl border border-[#e5dccf] bg-[#fbf8f4] p-5">
+                  <div className="mb-4 flex items-center justify-between gap-4">
+                    <h3 className="text-xl font-bold text-[#2d241e]">{item.name}</h3>
+                    <span className="rounded-full bg-[#f0e8dc] px-3 py-2 text-sm font-semibold text-[#8b745c]">{item.size}</span>
                   </div>
-                </article>
+                  <div className="rounded-2xl border border-[#e1d2bd] bg-[#f0e8dc] p-4">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-[#8b745c]">Price</p>
+                    <p className="text-2xl font-bold text-[#2d241e]">{item.marketPrice}</p>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
         </section>
       </main>
-
-      <footer className="border-t border-[#d8dde5] bg-white py-10">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 sm:px-6 lg:flex-row lg:items-center lg:px-8">
-          <div>
-            <p className="mb-2 text-lg font-bold tracking-[0.16em] text-[#20242c]">CRYSTAL BOARD</p>
-            <p className="text-sm text-[#586171]">碳晶板產品與價格資訊展示頁</p>
-          </div>
-          <div className="flex flex-wrap gap-4 text-sm text-[#586171]">
-            <a href={crystalCatalog.url} target="_blank" rel="noreferrer" className="transition-colors hover:text-[#20242c]">
-              碳晶板型錄
-            </a>
-            <button type="button" onClick={() => onNavigate('timber')} className="transition-colors hover:text-[#20242c]">
-              格柵系列
-            </button>
-            <button type="button" onClick={() => onNavigate('lux')} className="transition-colors hover:text-[#20242c]">
-              回到首頁
-            </button>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
+
+

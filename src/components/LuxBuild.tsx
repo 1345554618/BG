@@ -1,284 +1,174 @@
-import React from 'react';
-import { ArrowRight, Download, FileText, Mail, Menu } from 'lucide-react';
+﻿import React from 'react';
+import { ArrowRight, Download, ExternalLink } from 'lucide-react';
 import { catalogs } from '../data/catalogs';
 
-type LuxBuildProps = {
-  onNavigate: (view: string) => void;
-};
-
-const categories = [
+const materialCards = [
   {
+    id: 'woodfloor',
     title: '木地板',
-    subtitle: 'SPC Wood Floor',
-    img: '/products/woodfloor/M291/M291 (1).png',
-    view: 'woodfloor',
+    subtitle: 'SPC 系列',
+    description: '整理 SPC 木地板型號、實拍照片與價格資訊，方便快速挑選。',
+    image: '/products/woodfloor/M291/M291 (1).png',
   },
   {
-    title: '碳晶板',
-    subtitle: 'Carbon Crystal Board',
-    img: '/products/TJB/wood/7005.png',
-    view: 'crystal',
-  },
-  {
-    title: '優易石',
-    subtitle: 'Uestone',
-    img: '/products/uestone/SD/1000/sd-1000(1).png',
-    view: 'uestone',
-  },
-  {
+    id: 'timber',
     title: '格柵',
-    subtitle: 'Grille',
-    img: '/products/grille/SGAL-5084/116e1ade-c85a-4691-a490-80ea2b9fded5.png',
-    view: 'timber',
+    subtitle: '牆面與天花應用',
+    description: '收錄 149 與 170 系列格柵產品，適合展示空間與商業空間設計。',
+    image: '/products/grille cat.png',
   },
-];
+  {
+    id: 'crystal',
+    title: '碳晶板',
+    subtitle: '多種材質風格',
+    description: '提供木紋、布紋、金屬與大理石系列，適合現代室內設計應用。',
+    image: '/products/TJB/wood/7005.png',
+  },
+  {
+    id: 'uestone',
+    title: '優易石',
+    subtitle: '柔和米白石紋',
+    description: '整合 SD 與 SAD 系列花色與產品照片，呈現溫潤石材質感。',
+    image: '/products/sd-1000 (cat用).png',
+  },
+] as const;
 
-const catalogDisplay = {
-  'wood-floor': {
-    title: '美綠 SPC 木地板型錄',
-    description: '收錄 SPC 木地板系列花色與規格，方便業主與設計端快速比對。',
-  },
-  grille: {
-    title: '美綠 格柵型錄',
-    description: '整理格柵系列款式與尺寸，適合牆面、天花與商空應用提案。',
-  },
-  youyishi: {
-    title: '美綠 優易石型錄',
-    description: '彙整優易石主要產品花色，方便選樣與整體搭配。',
-  },
-  'carbon-crystal-board': {
-    title: '美綠 碳晶板型錄',
-    description: '提供碳晶板系列花色與應用方向，方便快速查看完整資料。',
-  },
-} satisfies Record<string, { title: string; description: string }>;
-
-export default function LuxBuild({ onNavigate }: LuxBuildProps) {
+export default function LuxBuild({ onNavigate }: { onNavigate: (view: string) => void }) {
   return (
-    <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur-md">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <button
-            type="button"
-            className="flex items-center text-2xl font-bold tracking-tighter text-brand-charcoal"
-            onClick={() => onNavigate('lux')}
-          >
-            LUX<span className="text-brand-warm-wood">BUILD</span>
+    <div className="min-h-screen bg-[#f7f3ed] text-[#2d241e]">
+      <header className="sticky top-0 z-50 border-b border-[#e2d8cb] bg-[#f7f3ed]/95 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <button type="button" className="flex items-center" onClick={() => onNavigate('lux')}>
+            <img src="/logo/BG_logo.png" alt="Beauty Green" className="h-14 w-auto object-contain sm:h-16" />
           </button>
 
-          <nav className="hidden items-center space-x-8 md:flex">
-            <button
-              type="button"
-              onClick={() => onNavigate('woodfloor')}
-              className="text-sm font-medium text-gray-700 transition-colors hover:text-brand-warm-wood"
-            >
-              木地板
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('timber')}
-              className="text-sm font-medium text-gray-700 transition-colors hover:text-brand-warm-wood"
-            >
-              格柵
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('crystal')}
-              className="text-sm font-medium text-gray-700 transition-colors hover:text-brand-warm-wood"
-            >
-              碳晶板
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('uestone')}
-              className="text-sm font-medium text-gray-700 transition-colors hover:text-brand-warm-wood"
-            >
-              優易石
-            </button>
-            <a
-              href="#catalogs"
-              className="text-sm font-medium text-gray-700 transition-colors hover:text-brand-warm-wood"
-            >
-              型錄下載
+          <nav className="hidden items-center gap-8 text-sm font-medium text-[#6d5c4d] md:flex">
+            <a href="#materials" className="transition-colors hover:text-[#2d241e]">
+              材料分類
             </a>
-            <a
-              href="#contact"
-              className="text-sm font-medium text-gray-700 transition-colors hover:text-brand-warm-wood"
-            >
-              聯絡我們
+            <a href="#catalogs" className="transition-colors hover:text-[#2d241e]">
+              最新型錄
             </a>
           </nav>
 
           <a
-            href="#catalogs"
-            className="hidden rounded-sm bg-brand-charcoal px-6 py-2 text-sm font-semibold text-white transition-all duration-300 hover:bg-brand-warm-wood md:inline-flex"
+            href="#materials"
+            className="inline-flex items-center gap-2 rounded-full bg-[#2d241e] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white transition-colors hover:bg-[#8b745c]"
           >
-            查看型錄
+            進入選材
+            <ArrowRight className="h-4 w-4" />
           </a>
-
-          <button type="button" className="text-gray-500 md:hidden" aria-label="Open menu">
-            <Menu className="h-6 w-6" />
-          </button>
         </div>
       </header>
 
       <main>
-        <section className="relative h-[60vh] overflow-hidden bg-brand-charcoal">
-          <img
-            src="/products/woodfloor/M304/M304 (1).png"
-            alt="美綠裝飾建材首頁主視覺"
-            className="absolute inset-0 h-full w-full object-cover opacity-40"
-          />
-          <div className="hero-overlay absolute inset-0" />
-          <div className="relative mx-auto flex h-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl text-white">
-              <span className="mb-6 inline-block bg-brand-warm-wood px-3 py-1 text-[10px] font-bold uppercase tracking-[0.35em]">
-                Mei Lu Materials
-              </span>
-              <h1 className="mb-6 text-5xl font-bold leading-tight md:text-6xl">
-                美綠裝飾建材
-                <span className="block text-brand-accent-gold">整合型材料展示平台</span>
-              </h1>
-              <p className="max-w-2xl text-lg font-light leading-relaxed text-gray-200">
-                展示木地板、格柵、碳晶板與優易石系列，首頁可直接進入各產品頁並查看對應型錄。
-              </p>
-            </div>
-          </div>
-        </section>
+        <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+          <div className="max-w-4xl">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.36em] text-[#8b745c]">BEAUTY GREEN MATERIALS</p>
+            <h1 className="mb-5 text-4xl font-bold tracking-tight text-[#2d241e] sm:text-5xl lg:text-6xl">
+              美綠裝飾建材
+              <br />
+              線上產品展示
+            </h1>
+            <p className="max-w-2xl text-base leading-8 text-[#6d5c4d] sm:text-lg">
+              將型錄、價格與產品照片整合成易於瀏覽的展示網站，讓客戶能更直覺地查看木地板、格柵、碳晶板與優易石系列。
+            </p>
 
-        <section className="bg-brand-soft-gray py-20" id="categories">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-16 text-center">
-              <h2 className="mb-4 text-3xl font-bold text-brand-charcoal md:text-4xl">材料分類</h2>
-              <div className="mx-auto mb-6 h-1 w-20 bg-brand-warm-wood" />
-              <p className="mx-auto max-w-2xl text-gray-600">
-                依照材料類型快速查看各系列產品資料與型錄內容。
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {categories.map((category) => (
-                <article
-                  key={category.view}
-                  className="group cursor-pointer overflow-hidden bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-                  onClick={() => onNavigate(category.view)}
-                >
-                  <div className="h-64 overflow-hidden">
-                    <img
-                      src={category.img}
-                      alt={category.title}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.28em] text-brand-warm-wood">
-                      {category.subtitle}
-                    </p>
-                    <h3 className="mb-4 text-xl font-bold text-brand-charcoal">{category.title}</h3>
-                    <div className="flex items-center text-xs font-bold uppercase tracking-[0.24em] text-brand-warm-wood group-hover:underline">
-                      查看產品
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-white py-20" id="catalogs">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-              <div>
-                <p className="mb-3 text-xs font-bold uppercase tracking-[0.3em] text-brand-warm-wood">
-                  Catalog Library
-                </p>
-                <h2 className="mb-3 text-3xl font-bold text-brand-charcoal md:text-4xl">最新型錄專區</h2>
-                <p className="max-w-2xl text-gray-600">
-                  所有型錄都可直接線上開啟或下載，方便你在網站上快速查閱與分享給客戶。
-                </p>
-              </div>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
-                href={catalogs[0]?.url ?? '#'}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center border border-brand-charcoal px-6 py-3 text-sm font-semibold text-brand-charcoal transition-colors hover:bg-brand-charcoal hover:text-white"
+                href="#materials"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2d241e] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#8b745c]"
               >
-                立即開啟型錄
+                查看材料分類
+                <ArrowRight className="h-4 w-4" />
+              </a>
+              <a
+                href="#catalogs"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d1c3b2] px-6 py-3 text-sm font-semibold text-[#2d241e] transition-colors hover:bg-[#efe6da]"
+              >
+                查看型錄
               </a>
             </div>
+          </div>
+        </section>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {catalogs.map((catalog) => {
-                const display = catalogDisplay[catalog.id] ?? {
-                  title: catalog.title,
-                  description: catalog.description,
-                };
+        <section id="materials" className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8 lg:pb-16">
+          <div className="mb-10">
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.36em] text-[#8b745c]">Material Categories</p>
+            <h2 className="mb-3 text-3xl font-bold text-[#2d241e] lg:text-4xl">材料分類</h2>
+            <p className="max-w-3xl leading-relaxed text-[#6d5c4d]">
+              依照實際應用需求整理四大系列，從產品圖片、規格到型錄入口都能在同一頁面快速找到。
+            </p>
+          </div>
 
-                return (
-                  <article
-                    key={catalog.id}
-                    className="border border-gray-200 bg-brand-soft-gray/40 p-6 shadow-sm lg:p-8"
-                  >
-                    <div className="mb-6 flex items-start justify-between gap-4">
-                      <div>
-                        <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.28em] text-brand-warm-wood">
-                          {catalog.year}
-                        </p>
-                        <h3 className="mb-2 text-2xl font-bold text-brand-charcoal">{display.title}</h3>
-                        <p className="leading-relaxed text-gray-600">{display.description}</p>
-                      </div>
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full border border-gray-200 bg-white text-brand-charcoal">
-                        <FileText className="h-5 w-5" />
-                      </div>
-                    </div>
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {materialCards.map((card) => (
+              <button
+                key={card.id}
+                type="button"
+                onClick={() => onNavigate(card.id)}
+                className="overflow-hidden rounded-[24px] border border-[#e2d8cb] bg-white text-left shadow-[0_16px_36px_rgba(45,36,30,0.07)] transition-all hover:-translate-y-1 hover:shadow-[0_20px_44px_rgba(45,36,30,0.11)]"
+              >
+                <div className="aspect-[1/1] overflow-hidden bg-[#efe6da]">
+                  <img src={card.image} alt={card.title} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
+                </div>
+                <div className="p-4">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.28em] text-[#8b745c]">{card.subtitle}</p>
+                  <h3 className="mb-2 text-lg font-bold text-[#2d241e]">{card.title}</h3>
+                  <p className="mb-4 text-xs leading-6 text-[#6d5c4d]">{card.description}</p>
+                  <div className="inline-flex items-center gap-2 text-xs font-semibold text-[#2d241e] transition-colors hover:text-[#8b745c]">
+                    進入頁面
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
 
-                    <div className="flex flex-col gap-3 sm:flex-row">
-                      <a
-                        href={catalog.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center justify-center gap-2 bg-brand-charcoal px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-warm-wood"
-                      >
-                        <FileText className="h-4 w-4" />
-                        線上開啟
-                      </a>
-                      <a
-                        href={catalog.url}
-                        download
-                        className="inline-flex items-center justify-center gap-2 border border-gray-300 px-5 py-3 text-sm font-semibold text-brand-charcoal transition-colors hover:bg-white"
-                      >
-                        <Download className="h-4 w-4" />
-                        下載 PDF
-                      </a>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
+        <section id="catalogs" className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+          <div className="mb-10">
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.36em] text-[#8b745c]">Latest Catalogs</p>
+            <h2 className="mb-3 text-3xl font-bold text-[#2d241e] lg:text-4xl">最新型錄</h2>
+            <p className="max-w-3xl leading-relaxed text-[#6d5c4d]">
+              目前網站已整合四本主要型錄，可直接開啟查看或下載提供給客戶參考。
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {catalogs.map((catalog) => (
+              <a
+                key={catalog.id}
+                href={catalog.url}
+                target="_blank"
+                rel="noreferrer"
+                className="group rounded-[28px] border border-[#e2d8cb] bg-white p-6 shadow-[0_20px_50px_rgba(45,36,30,0.08)] transition-all hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(45,36,30,0.12)]"
+              >
+                <div className="mb-5 inline-flex rounded-full bg-[#efe6da] p-3 text-[#8b745c]">
+                  <Download className="h-5 w-5" />
+                </div>
+                <h3 className="mb-3 text-xl font-bold text-[#2d241e]">{catalog.title}</h3>
+                <p className="mb-4 text-xs leading-6 text-[#6d5c4d]">{catalog.description}</p>
+                <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#2d241e] transition-colors group-hover:text-[#8b745c]">
+                  開啟型錄
+                  <ExternalLink className="h-4 w-4" />
+                </span>
+              </a>
+            ))}
           </div>
         </section>
       </main>
-
-      <footer className="bg-brand-charcoal py-12 text-white" id="contact">
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 px-4 sm:px-6 lg:flex-row lg:px-8">
-          <div className="text-center lg:text-left">
-            <span className="mb-1 block text-2xl font-bold tracking-tighter text-white">
-              LUX<span className="text-brand-warm-wood">BUILD</span>
-            </span>
-            <p className="text-xs text-gray-400">美綠裝飾建材展示網站</p>
-          </div>
-
-          <div className="flex flex-col items-center gap-4 text-sm text-gray-300 lg:items-end">
-            <p className="flex items-center gap-2">
-              <Mail className="h-4 w-4" />
-              <a href="mailto:contact@luxbuild.com" className="transition-colors hover:text-white">
-                contact@luxbuild.com
-              </a>
-            </p>
-            <p>© 2026 LuxBuild Materials Inc.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
