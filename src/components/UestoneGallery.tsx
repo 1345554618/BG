@@ -5,6 +5,8 @@ import ImageActionCard from './ImageActionCard';
 import { catalogs } from '../data/catalogs';
 import { uestoneProducts } from '../data/uestoneProducts';
 
+const isAvailableNow = (status?: string) => status === '現貨' || status === '少量現貨';
+
 const seriesNameMap: Record<string, string> = {
   全部: '全部',
   SD: '石皮',
@@ -91,16 +93,19 @@ export default function UestoneGallery({ onNavigate }: { onNavigate: (view: stri
   }, []);
 
   const [activeFilter, setActiveFilter] = useState(filters[0] ?? '');
-  const filteredProducts =
-    activeFilter === '全部' ? uestoneProducts : uestoneProducts.filter((product) => product.series === activeFilter);
+  const [showInStockOnly, setShowInStockOnly] = useState(false);
+  const baseFilteredProducts = uestoneProducts.filter((product) => product.series === activeFilter);
+  const filteredProducts = showInStockOnly ? baseFilteredProducts.filter((product) => isAvailableNow(product.stockStatus)) : baseFilteredProducts;
+  const hasSeriesStock = baseFilteredProducts.some((product) => isAvailableNow(product.stockStatus));
 
   const [selectedProductCode, setSelectedProductCode] = useState(uestoneProducts[0]?.code ?? '');
   const selectedProduct =
-    filteredProducts.find((product) => product.code === selectedProductCode) ?? filteredProducts[0] ?? uestoneProducts[0];
+    filteredProducts.find((product) => product.code === selectedProductCode) ?? filteredProducts[0] ?? null;
   const [activeImage, setActiveImage] = useState(selectedProduct?.images[0] ?? '');
 
   useEffect(() => {
     if (!filteredProducts.length) {
+      setActiveImage('');
       return;
     }
 
@@ -113,14 +118,10 @@ export default function UestoneGallery({ onNavigate }: { onNavigate: (view: stri
     setActiveImage(selectedProduct?.images[0] ?? '');
   }, [selectedProduct?.code]);
 
-  if (!selectedProduct) {
-    return null;
-  }
-
   const activeSeriesLabel = seriesNameMap[activeFilter] ?? activeFilter;
-  const selectedSeriesLabel = seriesNameMap[selectedProduct.series] ?? selectedProduct.series;
-  const productGridTitle = activeFilter === '全部' ? '優易石產品系列' : `${activeSeriesLabel}系列`;
-  const stockStatus = selectedProduct.stockStatus ?? '請洽詢';
+  const productGridTitle = `${activeSeriesLabel}系列`;
+  const stockStatus = selectedProduct?.stockStatus ?? '請洽詢';
+  const selectedSeriesLabel = selectedProduct ? seriesNameMap[selectedProduct.series] ?? selectedProduct.series : activeSeriesLabel;
   const StockIcon = stockStatus === '現貨' ? PackageCheck : stockStatus === '少量現貨' ? CircleAlert : Clock3;
   const stockTone =
     stockStatus === '現貨'
@@ -132,14 +133,6 @@ export default function UestoneGallery({ onNavigate }: { onNavigate: (view: stri
           : 'border-[#d8cbb9] bg-[linear-gradient(135deg,#cabaa6,#dfd3c5)] text-white shadow-[0_16px_32px_rgba(160,136,108,0.18)]';
   const stockDotTone =
     stockStatus === '現貨' ? 'bg-[#dff7e5]' : stockStatus === '少量現貨' ? 'bg-[#ffe8d5]' : stockStatus === '期貨' ? 'bg-[#fff2dc]' : 'bg-[#f9f2ea]';
-  const stockHint =
-    stockStatus === '現貨'
-      ? '可快速安排出貨'
-      : stockStatus === '少量現貨'
-        ? '庫存數量有限，建議先確認'
-        : stockStatus === '期貨'
-          ? '接單後安排備貨'
-          : '請先洽詢庫存狀況';
 
   return (
     <div className="min-h-screen bg-[#f6f1ea] text-[#2e2a26]">
@@ -179,98 +172,109 @@ export default function UestoneGallery({ onNavigate }: { onNavigate: (view: stri
 
       <main>
         <section id="featured" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-          <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1.08fr_0.92fr]">
-            <ProductImageGallery
-              images={selectedProduct.images}
-              activeImage={activeImage}
-              onSelect={setActiveImage}
-              altBase={selectedProduct.code}
-              aspectClass="aspect-[16/10]"
-              thumbAspectClass="aspect-[16/10]"
-            />
+          {selectedProduct ? (
+            <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1.08fr_0.92fr]">
+              <ProductImageGallery
+                images={selectedProduct.images}
+                activeImage={activeImage}
+                onSelect={setActiveImage}
+                altBase={selectedProduct.code}
+                aspectClass="aspect-[16/10]"
+                thumbAspectClass="aspect-[16/10]"
+              />
 
-            <div className="rounded-[32px] border border-[#ddd1c2] bg-white p-8 shadow-[0_24px_60px_rgba(46,42,38,0.08)] lg:p-10">
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.36em] text-[#8b7a67]">UESTONE SURFACE</p>
+              <div className="rounded-[32px] border border-[#ddd1c2] bg-white p-8 shadow-[0_24px_60px_rgba(46,42,38,0.08)] lg:p-10">
+                <p className="mb-4 text-xs font-bold uppercase tracking-[0.36em] text-[#8b7a67]">UESTONE SURFACE</p>
 
-              <div className="mb-4 flex flex-wrap items-center gap-3">
-                <h1 className="text-4xl font-bold tracking-tight text-[#2e2a26] lg:text-5xl">{selectedProduct.code}</h1>
-                <div className={`inline-flex items-center gap-3 rounded-2xl border px-4 py-2.5 ${stockTone}`}>
-                  <span className={`h-3 w-3 rounded-full ${stockDotTone} ring-4 ring-white/15`} />
-                  <div className="leading-tight">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/75">供應狀態</p>
-                    <p className="text-sm font-bold tracking-[0.08em]">{stockStatus}</p>
-                  </div>
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/12">
-                    <StockIcon className="h-4 w-4 text-white" />
+                <div className="mb-4 flex flex-wrap items-center gap-3">
+                  <h1 className="text-4xl font-bold tracking-tight text-[#2e2a26] lg:text-5xl">{selectedProduct.code}</h1>
+                  <div className={`inline-flex items-center gap-3 rounded-2xl border px-4 py-2.5 ${stockTone}`}>
+                    <span className={`h-3 w-3 rounded-full ${stockDotTone} ring-4 ring-white/15`} />
+                    <div className="leading-tight">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/75">供應狀態</p>
+                      <p className="text-sm font-bold tracking-[0.08em]">{stockStatus}</p>
+                    </div>
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/12">
+                      <StockIcon className="h-4 w-4 text-white" />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <p className="mb-2 text-xl text-[#6f6254]">{selectedProduct.textureName}</p>
-              <p className="mb-2 text-base text-[#8b7a67]">{selectedProduct.baseType} / {selectedSeriesLabel}</p>
-              <p className="mb-6 text-sm font-medium text-[#8b7a67]">{stockHint}</p>
+                <p className="mb-2 text-xl text-[#6f6254]">{selectedProduct.textureName}</p>
+                <p className="mb-2 text-base text-[#8b7a67]">{selectedProduct.baseType} / {selectedSeriesLabel}</p>
 
-              <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-[#e4d9ca] bg-[#fbf8f3] p-4">
-                  <div className="mb-2 flex items-center gap-2 text-[#8b7a67]">
-                    <SquareStack className="h-4 w-4" />
-                    <span className="text-xs font-semibold uppercase tracking-[0.24em]">系列</span>
+                <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-[#e4d9ca] bg-[#fbf8f3] p-4">
+                    <div className="mb-2 flex items-center gap-2 text-[#8b7a67]">
+                      <SquareStack className="h-4 w-4" />
+                      <span className="text-xs font-semibold uppercase tracking-[0.24em]">系列</span>
+                    </div>
+                    <p className="font-bold text-[#2e2a26]">{selectedSeriesLabel}</p>
                   </div>
-                  <p className="font-bold text-[#2e2a26]">{selectedSeriesLabel}</p>
-                </div>
-                <div className="rounded-2xl border border-[#e4d9ca] bg-[#fbf8f3] p-4">
-                  <div className="mb-2 flex items-center gap-2 text-[#8b7a67]">
-                    <Ruler className="h-4 w-4" />
-                    <span className="text-xs font-semibold uppercase tracking-[0.24em]">尺寸</span>
+                  <div className="rounded-2xl border border-[#e4d9ca] bg-[#fbf8f3] p-4">
+                    <div className="mb-2 flex items-center gap-2 text-[#8b7a67]">
+                      <Ruler className="h-4 w-4" />
+                      <span className="text-xs font-semibold uppercase tracking-[0.24em]">尺寸</span>
+                    </div>
+                    <p className="font-bold text-[#2e2a26]">{selectedProduct.size}</p>
                   </div>
-                  <p className="font-bold text-[#2e2a26]">{selectedProduct.size}</p>
-                </div>
-                <div className="rounded-2xl border border-[#e4d9ca] bg-[#fbf8f3] p-4">
-                  <div className="mb-2 flex items-center gap-2 text-[#8b7a67]">
-                    <ArrowRight className="h-4 w-4" />
-                    <span className="text-xs font-semibold uppercase tracking-[0.24em]">厚度</span>
+                  <div className="rounded-2xl border border-[#e4d9ca] bg-[#fbf8f3] p-4">
+                    <div className="mb-2 flex items-center gap-2 text-[#8b7a67]">
+                      <ArrowRight className="h-4 w-4" />
+                      <span className="text-xs font-semibold uppercase tracking-[0.24em]">厚度</span>
+                    </div>
+                    <p className="font-bold text-[#2e2a26]">{selectedProduct.thickness}</p>
                   </div>
-                  <p className="font-bold text-[#2e2a26]">{selectedProduct.thickness}</p>
-                </div>
-                <div className="rounded-2xl border border-[#e4d9ca] bg-[#fbf8f3] p-4">
-                  <div className="mb-2 flex items-center gap-2 text-[#8b7a67]">
-                    <Package className="h-4 w-4" />
-                    <span className="text-xs font-semibold uppercase tracking-[0.24em]">裝箱數</span>
+                  <div className="rounded-2xl border border-[#e4d9ca] bg-[#fbf8f3] p-4">
+                    <div className="mb-2 flex items-center gap-2 text-[#8b7a67]">
+                      <Package className="h-4 w-4" />
+                      <span className="text-xs font-semibold uppercase tracking-[0.24em]">裝箱數</span>
+                    </div>
+                    <p className="font-bold text-[#2e2a26]">{selectedProduct.packing}</p>
                   </div>
-                  <p className="font-bold text-[#2e2a26]">{selectedProduct.packing}</p>
                 </div>
-              </div>
 
-              <div className="mb-8 rounded-3xl border border-[#e4d5c2] bg-[#f3ebdf] p-5">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-[#8b7a67]">Price</p>
-                <p className="mb-1 text-3xl font-bold text-[#2e2a26]">{selectedProduct.price}</p>
-                <p className="mt-3 text-sm leading-relaxed text-[#6f6254]">
-                  優易石系列可運用於住宅牆面、商空展示面與接待區域，呈現自然紋理與溫潤質感。
-                </p>
-              </div>
+                <div className="mb-8 rounded-3xl border border-[#e4d5c2] bg-[#f3ebdf] p-5">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-[#8b7a67]">Price</p>
+                  <p className="mb-1 text-3xl font-bold text-[#2e2a26]">{selectedProduct.price}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-[#6f6254]">
+                    優易石系列可運用於住宅牆面、商空展示面與接待區域，呈現自然紋理與溫潤質感。
+                  </p>
+                </div>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
-                {uestoneCatalog ? (
-                  <a
-                    href={uestoneCatalog.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2e2a26] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#8b7a67]"
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  {uestoneCatalog ? (
+                    <a
+                      href={uestoneCatalog.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2e2a26] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#8b7a67]"
+                    >
+                      <FileText className="h-4 w-4" />
+                      查看型錄
+                    </a>
+                  ) : null}
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d7c7b5] px-6 py-3 text-sm font-semibold text-[#2e2a26] transition-colors hover:bg-[#f3ebdf]"
                   >
-                    <FileText className="h-4 w-4" />
-                    查看型錄
-                  </a>
-                ) : null}
-                <button
-                  type="button"
-                  onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d7c7b5] px-6 py-3 text-sm font-semibold text-[#2e2a26] transition-colors hover:bg-[#f3ebdf]"
-                >
-                  查看全部產品
-                </button>
+                    查看全部產品
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="rounded-[32px] border border-[#ddd1c2] bg-white p-10 text-center shadow-[0_24px_60px_rgba(46,42,38,0.08)]">
+              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.28em] text-[#8b7a67]">Stock Filter</p>
+              <h2 className="mb-3 text-3xl font-bold text-[#2e2a26]">
+                {hasSeriesStock ? `目前「${activeSeriesLabel}」沒有現貨產品` : `「${activeSeriesLabel}」目前沒有現貨資料`}
+              </h2>
+              <p className="text-[#6f6254]">
+                {hasSeriesStock ? '切換回全部系列商品即可繼續查看完整列表。' : '這個系列目前都不是現貨，或尚未建立現貨標記資料。'}
+              </p>
+            </div>
+          )}
         </section>
 
         <section id="products" className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
@@ -289,6 +293,18 @@ export default function UestoneGallery({ onNavigate }: { onNavigate: (view: stri
                 {seriesNameMap[filter] ?? filter}
               </button>
             ))}
+            <button
+              type="button"
+              onClick={() => setShowInStockOnly((current) => !current)}
+              className={`inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition ${
+                showInStockOnly
+                  ? 'bg-[#2e2a26] text-white shadow-[0_12px_24px_rgba(46,42,38,0.16)]'
+                  : 'border border-[#d7c7b5] bg-white text-[#6f6254] hover:border-[#8b7a67] hover:text-[#2e2a26]'
+              }`}
+            >
+              <Clock3 className="h-4 w-4" />
+              只看現貨
+            </button>
           </div>
 
           <div className="mb-10">
@@ -299,23 +315,29 @@ export default function UestoneGallery({ onNavigate }: { onNavigate: (view: stri
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredProducts.map((product) => (
-              <ImageActionCard
-                key={product.code}
-                imageSrc={product.images[0]}
-                alt={product.code}
-                selected={selectedProduct.code === product.code}
-                aspectClass="aspect-[5/4]"
-                imageBackgroundClass="bg-[#f0e8dc]"
-                imageBorderClass="border-[#e8ddd0]"
-                onClick={() => {
-                  setSelectedProductCode(product.code);
-                  document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
-              />
-            ))}
-          </div>
+          {filteredProducts.length ? (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filteredProducts.map((product) => (
+                <ImageActionCard
+                  key={product.code}
+                  imageSrc={product.images[0]}
+                  alt={product.code}
+                  selected={selectedProduct?.code === product.code}
+                  aspectClass="aspect-[5/4]"
+                  imageBackgroundClass="bg-[#f0e8dc]"
+                  imageBorderClass="border-[#e8ddd0]"
+                  onClick={() => {
+                    setSelectedProductCode(product.code);
+                    document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-[28px] border border-[#ddd1c2] bg-white p-8 text-center text-[#6f6254] shadow-[0_18px_40px_rgba(46,42,38,0.06)]">
+              {hasSeriesStock ? `目前沒有符合「只看現貨」條件的${activeSeriesLabel}產品。` : `${activeSeriesLabel}目前沒有現貨可篩選。`}
+            </div>
+          )}
         </section>
       </main>
     </div>

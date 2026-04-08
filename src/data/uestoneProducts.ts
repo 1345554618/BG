@@ -35,7 +35,7 @@ export const uestoneProducts: UestoneProduct[] = [
     size: '60 x 60 cm',
     thickness: '4 cm',
     packing: '5 片 / 箱',
-    price: '$4800 / 片',
+    price: ' / 片',
     stockStatus: '現貨',
     images: [
       '/products/uestone/CH/CHD/chd-3000 (1).png',
@@ -421,7 +421,7 @@ export const uestoneProducts: UestoneProduct[] = [
     size: '122 x 33 cm',
     thickness: '4.5 cm',
     packing: '6 片 / 箱',
-    price: '請洽詢',
+    price: ' / 片',
     stockStatus: '期貨',
     images: [
       '/products/uestone/SDD/1000/sdd-1000 (1).png',
@@ -436,7 +436,7 @@ export const uestoneProducts: UestoneProduct[] = [
     size: '122 x 33 cm',
     thickness: '4.5 cm',
     packing: '6 片 / 箱',
-    price: '請洽詢',
+    price: ' / 片',
     stockStatus: '期貨',
     images: [
       '/products/uestone/SDD/4000/sdd-4000 (1).png',
@@ -451,7 +451,7 @@ export const uestoneProducts: UestoneProduct[] = [
     size: '122 x 33 cm',
     thickness: '3.5 cm',
     packing: '6 片 / 箱',
-    price: '請洽詢',
+    price: ' / 片',
     stockStatus: '期貨',
     images: [
       '/products/uestone/SJD/2190/sjd-2190 (1).png',
@@ -467,7 +467,7 @@ export const uestoneProducts: UestoneProduct[] = [
     size: '122 x 33 cm',
     thickness: '3.5 cm',
     packing: '6 片 / 箱',
-    price: '請洽詢',
+    price: ' / 片',
     stockStatus: '期貨',
     images: [
       '/products/uestone/SJD/3330/sjd-3330 (1).png',
@@ -483,7 +483,7 @@ export const uestoneProducts: UestoneProduct[] = [
     size: '122 x 33 cm',
     thickness: '3.5 cm',
     packing: '6 片 / 箱',
-    price: '請洽詢',
+    price: ' / 片',
     stockStatus: '期貨',
     images: [
       '/products/uestone/SJD/3390/sjd-3390 (1).png',
@@ -1114,3 +1114,4 @@ export const uestoneProducts: UestoneProduct[] = [
     ],
   },
 ];
+
