@@ -29,7 +29,7 @@ const materialCards = [
     title: '優易石',
     subtitle: '柔和米白石紋',
     description: '整合 SD 與 SAD 系列花色與產品照片，呈現溫潤石材質感。',
-    image: '/products/sd-1000 (cat用).png',
+    image: '/products/sd-4900 (cat用).jpg',
   },
 ] as const;
 
@@ -161,6 +161,7 @@ export default function LuxBuild({ onNavigate }: { onNavigate: (view: string) =>
     </div>
   );
 }
+
 
 
 
