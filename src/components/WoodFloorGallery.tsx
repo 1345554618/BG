@@ -124,7 +124,6 @@ export default function WoodFloorGallery({ onNavigate }: { onNavigate: (view: st
                 <div className="mb-8 rounded-3xl border border-[#e1d2bd] bg-[#f0e8dc] p-5">
                   <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-[#8b745c]">Price</p>
                   <p className="mb-1 text-3xl font-bold text-[#2d241e]">{selectedProduct.marketPricePerBox}</p>
-                  <p className="text-lg font-semibold text-[#6d5c4d]">{selectedProduct.designerPricePerBox}</p>
                   <p className="mt-3 text-sm leading-relaxed text-[#6d5c4d]">適合居家、商業空間與展示空間使用，兼顧美感與日常維護便利性。</p>
                 </div>
 
