@@ -30,7 +30,7 @@ const seriesNameMap: Record<string, string> = {
   CHL: '九宮格三角型',
   'CHD-D': '九宮格雙面',
   GB: '立體拼接格',
-  MGB: '大立體拼接格',
+  MGB: '金屬拼接格',
   'SS-C': '連紋大頁岩石',
   'SSD-L': '大水流石',
   YHD: '水立方',

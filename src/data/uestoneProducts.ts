@@ -30,7 +30,7 @@ export const uestoneProducts: UestoneProduct[] = [
   {
     code: 'CHD-3000',
     series: 'CHD',
-    textureName: '灰',
+    textureName: '水泥灰',
     baseType: '優易石',
     size: '60 x 60 cm',
     thickness: '4 cm',
@@ -45,7 +45,7 @@ export const uestoneProducts: UestoneProduct[] = [
   {
     code: 'CHD-D-3000',
     series: 'CHD-D',
-    textureName: '灰',
+    textureName: '水泥灰',
     baseType: '優易石',
     size: '120 x 60 cm',
     thickness: '6 cm',
@@ -61,7 +61,7 @@ export const uestoneProducts: UestoneProduct[] = [
   {
     code: 'CHL-3000',
     series: 'CHL',
-    textureName: '灰',
+    textureName: '水泥灰',
     baseType: '優易石',
     size: '60 x 60 cm',
     thickness: '6 cm',
@@ -76,7 +76,7 @@ export const uestoneProducts: UestoneProduct[] = [
   {
     code: 'CHO-3000',
     series: 'CHO',
-    textureName: '灰',
+    textureName: '水泥灰',
     baseType: '優易石',
     size: '60 x 60 cm',
     thickness: '4 cm',
@@ -152,7 +152,7 @@ export const uestoneProducts: UestoneProduct[] = [
   {
     code: 'LSD-1000',
     series: 'LSD',
-    textureName: '維多利亞白',
+    textureName: '白',
     baseType: '優易石',
     size: '240 x 80 cm',
     thickness: '4 cm',
@@ -573,15 +573,29 @@ export const uestoneProducts: UestoneProduct[] = [
   {
     code: 'SS-C-4900',
     series: 'SS-C',
-    textureName: '頁岩石',
+    textureName: '羅馬黑',
     baseType: '優易石',
-    size: '120 x 60 cm',
+    size: '270 x 90 cm',
     thickness: '4 cm',
-    packing: '5 片 / 箱',
-    price: '$3900 / 片',
+    packing: '4 片 / 箱',
+    price: '$4800 / 片',
     stockStatus: '期貨',
     images: [
       '/products/uestone/SS/c-4900/ss-c-4900.png',
+    ],
+  },
+  {
+    code: 'SS-C-2000',
+    series: 'SS-C',
+    textureName: '萊茵黃',
+    baseType: '優易石',
+    size: '270 x 90 cm',
+    thickness: '4 cm',
+    packing: '4 片 / 箱',
+    price: '$4800 / 片',
+    stockStatus: '期貨',
+    images: [
+      '/products/uestone/SS/c-2000/ss-c-2000.jpg',
     ],
   },
   {
@@ -617,7 +631,7 @@ export const uestoneProducts: UestoneProduct[] = [
   {
     code: 'SSD-L-4900',
     series: 'SSD-L',
-    textureName: '大水流石',
+    textureName: '羅馬黑',
     baseType: '優易石',
     size: '240 x 60 cm',
     thickness: '3 cm',
@@ -720,7 +734,7 @@ export const uestoneProducts: UestoneProduct[] = [
   {
     code: 'TBD-2800',
     series: 'TBD',
-    textureName: '灰',
+    textureName: '黃',
     baseType: '優易石',
     size: '100 x 40 cm',
     thickness: '2 cm',
@@ -748,7 +762,7 @@ export const uestoneProducts: UestoneProduct[] = [
   {
     code: 'TD-3400',
     series: 'TD',
-    textureName: '瓦片',
+    textureName: '灰',
     baseType: '優易石',
     size: '120 x 60 cm',
     thickness: '3 cm',

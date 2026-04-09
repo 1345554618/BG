@@ -108,6 +108,22 @@ export const grilleProducts: GrilleProduct[] = [
       '/products/grille/SGAS-6163/SGAS-6136 (3).png',
     ],
   },
+  {
+    code: 'SGBL-6163',
+    series: '185 格柵系列',
+    finish: '漆感白',
+    coverSize: '260 x 17 cm',
+    productSize: '260 x 18 cm',
+    thickness: '1.4 cm',
+    packing: '10 支 / 箱',
+    price: '$865 / 支',
+    stockStatus: '現貨',
+    images: [
+      '/products/grille/SGBL-6163/SGBL-6163 (1).png',
+      '/products/grille/SGBL-6163/SGBL-6163 (2).png',
+      '/products/grille/SGBL-6163/SGBL-6163 (3).png',
+    ],
+  },
 ];
 
 
