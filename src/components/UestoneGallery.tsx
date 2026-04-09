@@ -38,6 +38,7 @@ const seriesNameMap: Record<string, string> = {
   WED: '英格蘭木',
   TBD: '洞石交丁磚',
   TJD: '立型洞石磚',
+  TTD: '洞石板',
   CTS: '城堡石',
   MRD: '龜紋石',
   ELS: '鵝卵石',
@@ -75,6 +76,7 @@ const preferredSeriesOrder = [
   'WED',
   'TBD',
   'TJD',
+  'TTD',
   'CTS',
   'MRD',
   'ELS',
@@ -85,7 +87,7 @@ const preferredSeriesOrder = [
 export default function UestoneGallery({ onNavigate }: { onNavigate: (view: string) => void }) {
   const uestoneCatalog = catalogs.find((catalog) => catalog.id === 'youyishi');
   const filters = useMemo(() => {
-    const availableSeries = Array.from(new Set(uestoneProducts.map((product) => product.series)));
+    const availableSeries = Array.from(new Set(uestoneProducts.map((product) => product.series).filter((series): series is string => Boolean(series))));
     return [
       ...preferredSeriesOrder.filter((series) => availableSeries.includes(series)),
       ...availableSeries.filter((series) => !preferredSeriesOrder.includes(series)).sort(),
@@ -343,3 +345,5 @@ export default function UestoneGallery({ onNavigate }: { onNavigate: (view: stri
     </div>
   );
 }
+
+
