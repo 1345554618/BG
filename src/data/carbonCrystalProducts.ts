@@ -1037,15 +1037,15 @@ export const carbonCrystalAccessories: CarbonCrystalAccessory[] = [
   {
     name: 'L 型收邊條',
     size: '300 cm',
-    marketPrice: ' / 支',
+    marketPrice: '$ 940 / 支',
     designerPrice: ' / 支',
     distributorPrice: ' / 支',
     professionalDealerPrice: ' / 支',
   },
   {
     name: '工字條',
-    size: '-',
-    marketPrice: ' / 支',
+    size: '300 cm',
+    marketPrice: '$ 940 / 支',
     designerPrice: ' / 支',
     distributorPrice: ' / 支',
     professionalDealerPrice: ' / 支',
