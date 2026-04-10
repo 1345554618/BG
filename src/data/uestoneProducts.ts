@@ -899,7 +899,10 @@ export const uestoneProducts: UestoneProduct[] = [
     price: '$3900 / 片',
     stockStatus: '現貨',
     images: [
-      '/products/uestone/XSD/1000/xsd-1000.png',
+      '/products/uestone/XSD/1000/xsd-1000 (1).png',
+      '/products/uestone/XSD/1000/xsd-1000 (2).png',
+      '/products/uestone/XSD/1000/xsd-1000 (3).png',
+      '/products/uestone/XSD/1000/xsd-1000 (4).png',
     ],
   },
   {
