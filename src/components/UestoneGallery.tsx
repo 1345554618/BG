@@ -7,6 +7,39 @@ import { uestoneProducts } from '../data/uestoneProducts';
 
 const isAvailableNow = (status?: string) => status === '現貨' || status === '少量現貨';
 
+const formatSpecSize = (size?: string, thickness?: string) => {
+  const normalizedSize = size?.replace(/cm/gi, '').trim() ?? '';
+  const normalizedThickness = thickness?.replace(/cm/gi, '').trim() ?? '';
+
+  if (!normalizedSize && !normalizedThickness) return '-';
+  if (!normalizedThickness || normalizedThickness === '-') return size ?? '-';
+  if (!normalizedSize || normalizedSize === '-') return thickness ?? '-';
+
+  return normalizedSize + ' x ' + normalizedThickness + ' cm';
+};
+
+const formatCoverageArea = (size?: string) => {
+  const normalizedSize = size?.replace(/cm/gi, '').replace(/\s+/g, '').trim() ?? '';
+
+  const coverageMap: Record<string, string> = {
+    '120x33': '0.12 / 坪',
+    '122x33': '0.12 / 坪',
+    '122x34': '0.12 / 坪',
+    '120x18': '0.01 / 坪',
+    '120x30': '0.11 / 坪',
+    '110x40': '0.01 / 坪',
+    '100x40': '0.01 / 坪',
+    '120x60': '0.21 / 坪',
+    '240x80': '0.58 / 坪',
+    '128x46': '0.17 / 坪',
+    '150x75': '0.34 / 坪',
+    '161x86': '0.41 / 坪',
+    '60x60': '0.11 / 坪',
+  };
+
+  return coverageMap[normalizedSize] ?? '待補';
+};
+
 const seriesNameMap: Record<string, string> = {
   全部: '全部',
   SD: '石皮',
@@ -218,14 +251,14 @@ export default function UestoneGallery({ onNavigate }: { onNavigate: (view: stri
                       <Ruler className="h-4 w-4" />
                       <span className="text-xs font-semibold uppercase tracking-[0.24em]">尺寸</span>
                     </div>
-                    <p className="font-bold text-[#2e2a26]">{selectedProduct.size}</p>
+                    <p className="font-bold text-[#2e2a26]">{formatSpecSize(selectedProduct.size, selectedProduct.thickness)}</p>
                   </div>
                   <div className="rounded-2xl border border-[#e4d9ca] bg-[#fbf8f3] p-4">
                     <div className="mb-2 flex items-center gap-2 text-[#8b7a67]">
                       <ArrowRight className="h-4 w-4" />
-                      <span className="text-xs font-semibold uppercase tracking-[0.24em]">厚度</span>
+                      <span className="text-xs font-semibold uppercase tracking-[0.24em]">覆蓋面積</span>
                     </div>
-                    <p className="font-bold text-[#2e2a26]">{selectedProduct.thickness}</p>
+                    <p className="font-bold text-[#2e2a26]">{formatCoverageArea(selectedProduct.size)}</p>
                   </div>
                   <div className="rounded-2xl border border-[#e4d9ca] bg-[#fbf8f3] p-4">
                     <div className="mb-2 flex items-center gap-2 text-[#8b7a67]">
@@ -345,5 +378,11 @@ export default function UestoneGallery({ onNavigate }: { onNavigate: (view: stri
     </div>
   );
 }
+
+
+
+
+
+
 
 
