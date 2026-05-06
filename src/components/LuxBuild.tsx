@@ -79,14 +79,14 @@ export default function LuxBuild({ onNavigate }: { onNavigate: (view: string) =>
                 href="#materials"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2d241e] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#8b745c]"
               >
-                查看材料分類
+                查看綫上型錄
                 <ArrowRight className="h-4 w-4" />
               </a>
               <a
                 href="#catalogs"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d1c3b2] px-6 py-3 text-sm font-semibold text-[#2d241e] transition-colors hover:bg-[#efe6da]"
               >
-                查看型錄
+                型錄下載
               </a>
             </div>
           </div>
@@ -94,8 +94,8 @@ export default function LuxBuild({ onNavigate }: { onNavigate: (view: string) =>
 
         <section id="materials" className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8 lg:pb-16">
           <div className="mb-10">
-            <p className="mb-3 text-xs font-bold uppercase tracking-[0.36em] text-[#8b745c]">Material Categories</p>
-            <h2 className="mb-3 text-3xl font-bold text-[#2d241e] lg:text-4xl">材料分類</h2>
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.36em] text-[#8b745c]">Online Catalogs</p>
+            <h2 className="mb-3 text-3xl font-bold text-[#2d241e] lg:text-4xl">綫上型錄</h2>
             <p className="max-w-3xl leading-relaxed text-[#6d5c4d]">
               依照實際應用需求整理四大系列，從產品圖片、規格到型錄入口都能在同一頁面快速找到。
             </p>
@@ -128,8 +128,8 @@ export default function LuxBuild({ onNavigate }: { onNavigate: (view: string) =>
 
         <section id="catalogs" className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
           <div className="mb-10">
-            <p className="mb-3 text-xs font-bold uppercase tracking-[0.36em] text-[#8b745c]">Latest Catalogs</p>
-            <h2 className="mb-3 text-3xl font-bold text-[#2d241e] lg:text-4xl">最新型錄</h2>
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.36em] text-[#8b745c]">Catalog Downloads</p>
+            <h2 className="mb-3 text-3xl font-bold text-[#2d241e] lg:text-4xl">型錄下載</h2>
             <p className="max-w-3xl leading-relaxed text-[#6d5c4d]">
               目前網站已整合四本主要型錄，可直接開啟查看或下載提供給客戶參考。
             </p>
@@ -161,6 +161,7 @@ export default function LuxBuild({ onNavigate }: { onNavigate: (view: string) =>
     </div>
   );
 }
+
 
 
 
