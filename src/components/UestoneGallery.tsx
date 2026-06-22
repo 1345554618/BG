@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, CircleAlert, Clock3, Download, FileText, Package, PackageCheck, Ruler, SquareStack } from 'lucide-react';
+import { ArrowRight, Calculator, CircleAlert, Clock3, Download, FileText, Package, PackageCheck, Ruler, SquareStack } from 'lucide-react';
 import ProductImageGallery from './ProductImageGallery';
 import ImageActionCard from './ImageActionCard';
 import { catalogs } from '../data/catalogs';
@@ -119,6 +119,7 @@ const preferredSeriesOrder = [
 
 export default function UestoneGallery({ onNavigate }: { onNavigate: (view: string) => void }) {
   const uestoneCatalog = catalogs.find((catalog) => catalog.id === 'youyishi');
+  const calculatorUrl = 'https://bg-calculator.jack1345554618.workers.dev/';
   const filters = useMemo(() => {
     const availableSeries = Array.from(new Set(uestoneProducts.map((product) => product.series).filter((series): series is string => Boolean(series))));
     return [
@@ -378,6 +379,7 @@ export default function UestoneGallery({ onNavigate }: { onNavigate: (view: stri
     </div>
   );
 }
+
 
 
 

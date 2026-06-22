@@ -1,11 +1,12 @@
 ﻿import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Clock3, Download, FileText, Layers3, Package, PackageCheck, Ruler } from 'lucide-react';
+import { ArrowRight, Calculator, Clock3, Download, FileText, Layers3, Package, PackageCheck, Ruler } from 'lucide-react';
 import ProductImageGallery from './ProductImageGallery';
 import ImageActionCard from './ImageActionCard';
 import { carbonCrystalAccessories, carbonCrystalProducts } from '../data/carbonCrystalProducts';
 import { crystalCatalog } from '../data/catalogs';
 
 const isAvailableNow = (status?: string) => status === '現貨' || status === '少量現貨';
+const calculatorUrl = 'https://bg-calculator.jack1345554618.workers.dev/';
 
 const formatSpecSize = (size?: string, thickness?: string) => {
   const normalizedSize = size?.replace(/cm/gi, '').trim() ?? '';
@@ -117,17 +118,28 @@ export default function CrystalTech({ onNavigate }: { onNavigate: (view: string)
             ) : null}
           </nav>
 
-          {crystalCatalog ? (
+          <div className="flex items-center gap-2">
             <a
-              href={crystalCatalog.url}
+              href={calculatorUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-[#2d241e] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white transition-colors hover:bg-[#8b745c]"
+              className="inline-flex items-center gap-2 rounded-full border border-[#d1c3b2] bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#2d241e] transition-colors hover:bg-[#f0e8dc]"
             >
-              <Download className="h-4 w-4" />
-              開啟型錄
+              <Calculator className="h-4 w-4" />
+              片數試算
             </a>
-          ) : null}
+            {crystalCatalog ? (
+              <a
+                href={crystalCatalog.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-[#2d241e] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white transition-colors hover:bg-[#8b745c]"
+              >
+                <Download className="h-4 w-4" />
+                開啟型錄
+              </a>
+            ) : null}
+          </div>
         </div>
       </header>
 
@@ -327,6 +339,7 @@ export default function CrystalTech({ onNavigate }: { onNavigate: (view: string)
     </div>
   );
 }
+
 
 
 

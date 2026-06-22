@@ -1,11 +1,12 @@
 ﻿import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, CircleAlert, Clock3, Download, FileText, Layers3, Package, PackageCheck, Ruler } from 'lucide-react';
+import { ArrowRight, Calculator, CircleAlert, Clock3, Download, FileText, Layers3, Package, PackageCheck, Ruler } from 'lucide-react';
 import ProductImageGallery from './ProductImageGallery';
 import ImageActionCard from './ImageActionCard';
 import { timberCatalogs } from '../data/catalogs';
 import { grilleProducts } from '../data/grilleProducts';
 
 const isAvailableNow = (status?: string) => status === '現貨' || status === '少量現貨';
+const calculatorUrl = 'https://bg-calculator.jack1345554618.workers.dev/';
 
 export default function TimberElite({ onNavigate }: { onNavigate: (view: string) => void }) {
   const filters = useMemo(() => ['全部', ...Array.from(new Set(grilleProducts.map((product) => product.series)))], []);
@@ -229,4 +230,5 @@ export default function TimberElite({ onNavigate }: { onNavigate: (view: string)
     </div>
   );
 }
+
 

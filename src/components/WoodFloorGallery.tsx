@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useState } from 'react';
-import { ArrowRight, Clock3, Download, FileText, Layers3, Package, Ruler } from 'lucide-react';
+import { ArrowRight, Calculator, Clock3, Download, FileText, Layers3, Package, Ruler } from 'lucide-react';
 import ProductImageGallery from './ProductImageGallery';
 import ImageActionCard from './ImageActionCard';
 import { catalogs } from '../data/catalogs';
@@ -42,6 +42,7 @@ const formatCoverageArea = (size?: string) => {
 
 export default function WoodFloorGallery({ onNavigate }: { onNavigate: (view: string) => void }) {
   const woodFloorCatalog = catalogs.find((catalog) => catalog.id === 'wood-floor');
+  const calculatorUrl = 'https://bg-calculator.jack1345554618.workers.dev/';
   const [showInStockOnly, setShowInStockOnly] = useState(false);
   const filteredProducts = showInStockOnly ? woodFloorProducts.filter((product) => isAvailableNow(product.stockStatus)) : woodFloorProducts;
   const [selectedProductCode, setSelectedProductCode] = useState(woodFloorProducts[0].code);
@@ -231,6 +232,7 @@ export default function WoodFloorGallery({ onNavigate }: { onNavigate: (view: st
     </div>
   );
 }
+
 
 
 
